@@ -17,7 +17,7 @@ async function callOpenAI(topic: string, level: string): Promise<string> {
   if (!openai) throw new Error("OpenAI client not configured");
 
   const response = await openai.chat.completions.create({
-    model: "gpt-4.1-mini",
+    model: "gpt-4.1-nano",
     max_tokens: 4096,
     messages: [
       { role: "system", content: SYSTEM_PROMPT },
@@ -34,7 +34,7 @@ async function callAnthropic(topic: string, level: string): Promise<string> {
   if (!anthropic) throw new Error("Anthropic client not configured");
 
   const message = await anthropic.messages.create({
-    model: "claude-sonnet-4-20250514",
+    model: "claude-sonnet-4-6-20250627",
     max_tokens: 4096,
     system: SYSTEM_PROMPT,
     messages: [
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Primary: OpenAI GPT-4.1 Mini | Fallback: Anthropic Claude
+    // Primary: OpenAI GPT-4.1 Nano | Fallback: Anthropic Claude Sonnet 4.6
     let rawText: string;
     try {
       rawText = await callOpenAI(topic, level);
