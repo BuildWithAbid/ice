@@ -4,7 +4,7 @@
 - **Framework**: Next.js 14+ with App Router, TypeScript
 - **Styling**: Tailwind CSS + shadcn/ui components
 - **Diagrams**: Mermaid.js for flowcharts/sequence diagrams
-- **AI**: Anthropic Claude API (`@anthropic-ai/sdk`) for generating explanations
+- **AI**: OpenAI GPT-4.1 Mini (default) with Anthropic Claude (fallback) for generating explanations
 - **Caching**: Upstash Redis for caching generated explanations
 
 ## Project Structure
@@ -12,7 +12,7 @@
 app/
   page.tsx                    — Landing page with topic search
   explain/[topic]/page.tsx    — Explanation display page
-  api/explain/route.ts        — POST endpoint for Claude API calls
+  api/explain/route.ts        — POST endpoint for AI calls (OpenAI primary, Anthropic fallback)
   layout.tsx                  — Root layout with fonts and metadata
   globals.css                 — Tailwind base + custom design tokens
 components/
@@ -50,13 +50,14 @@ lib/
 - Mobile-first responsive design
 
 ### API
-- All Claude calls go through app/api/explain/route.ts
+- All AI calls go through app/api/explain/route.ts (OpenAI GPT-4.1 Mini primary, Anthropic Claude fallback)
 - Cache responses in Redis keyed by `topic:level`
 - Return structured JSON matching the Explanation type
 - Handle errors gracefully with typed error responses
 
 ### Environment Variables
 ```
+OPENAI_API_KEY=
 ANTHROPIC_API_KEY=
 UPSTASH_REDIS_REST_URL=
 UPSTASH_REDIS_REST_TOKEN=
