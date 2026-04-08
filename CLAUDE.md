@@ -4,7 +4,7 @@
 - **Framework**: Next.js 14+ with App Router, TypeScript
 - **Styling**: Tailwind CSS + shadcn/ui components
 - **Diagrams**: Mermaid.js for flowcharts/sequence diagrams
-- **AI**: OpenAI GPT-4.1 Nano (default) with Anthropic Claude Sonnet 4.6 (fallback) for generating explanations
+- **AI**: OpenAI GPT-5.4 Mini (default) with Anthropic Claude Sonnet 4.6 (fallback) for generating explanations
 - **Caching**: Upstash Redis for caching generated explanations
 
 ## Project Structure
@@ -50,7 +50,7 @@ lib/
 - Mobile-first responsive design
 
 ### API
-- All AI calls go through app/api/explain/route.ts (OpenAI GPT-4.1 Nano primary, Claude Sonnet 4.6 fallback)
+- All AI calls go through app/api/explain/route.ts (OpenAI GPT-5.4 Mini primary, Claude Sonnet 4.6 fallback)
 - Cache responses in Redis keyed by `topic:level`
 - Return structured JSON matching the Explanation type
 - Handle errors gracefully with typed error responses

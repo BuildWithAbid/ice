@@ -17,7 +17,7 @@ async function callOpenAI(topic: string, level: string): Promise<string> {
   if (!openai) throw new Error("OpenAI client not configured");
 
   const response = await openai.chat.completions.create({
-    model: "gpt-4.1-nano",
+    model: "gpt-5.4-mini-2026-03-17",
     max_tokens: 4096,
     messages: [
       { role: "system", content: SYSTEM_PROMPT },
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Primary: OpenAI GPT-4.1 Nano | Fallback: Anthropic Claude Sonnet 4.6
+    // Primary: OpenAI GPT-5.4 Mini | Fallback: Anthropic Claude Sonnet 4.6
     let rawText: string;
     try {
       rawText = await callOpenAI(topic, level);
