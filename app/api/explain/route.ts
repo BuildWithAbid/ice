@@ -78,11 +78,43 @@ export async function POST(request: NextRequest) {
 
     // Primary: OpenAI GPT-5.4 Mini | Fallback: Anthropic Claude Sonnet 4.6
     let rawText: string;
-    try {
-      rawText = await callOpenAI(topic, level);
-    } catch (openaiError) {
-      console.warn("OpenAI call failed, falling back to Anthropic:", openaiError);
-      rawText = await callAnthropic(topic, level);
+    let openaiError: unknown = null;
+
+    if (openai) {
+      try {
+        rawText = await callOpenAI(topic, level);
+      } catch (err) {
+        openaiError = err;
+        console.warn("OpenAI call failed:", err);
+      }
+    }
+
+    if (!rawText! && anthropic) {
+      try {
+        rawText = await callAnthropic(topic, level);
+      } catch (err) {
+        console.warn("Anthropic fallback also failed:", err);
+        const primaryMsg = openaiError instanceof Error ? openaiError.message : "OpenAI unavailable";
+        const fallbackMsg = err instanceof Error ? err.message : "Anthropic unavailable";
+        return NextResponse.json<ApiResponse>(
+          { success: false, error: `Both providers failed. Primary: ${primaryMsg}. Fallback: ${fallbackMsg}` },
+          { status: 502 }
+        );
+      }
+    }
+
+    if (!rawText!) {
+      if (!openai && !anthropic) {
+        return NextResponse.json<ApiResponse>(
+          { success: false, error: "No AI provider configured. Set OPENAI_API_KEY or ANTHROPIC_API_KEY." },
+          { status: 503 }
+        );
+      }
+      const reason = openaiError instanceof Error ? openaiError.message : "OpenAI call failed";
+      return NextResponse.json<ApiResponse>(
+        { success: false, error: `Primary provider failed: ${reason}. No fallback configured — set ANTHROPIC_API_KEY to enable fallback.` },
+        { status: 502 }
+      );
     }
 
     const explanation: Explanation = JSON.parse(rawText);
